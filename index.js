@@ -59,15 +59,17 @@ app.post("/api/shorturl", function (req, res) {
 });
 
 app.get("/api/shorturl/:short_url", function (req, res) {
-  const shortUrl = Number(req.params.short_url);
+  const shortUrl = parseInt(req.params.short_url);
 
-  const found = urls.find(url => url.short_url === shortUrl);
+  const found = urls.find(function (item) {
+    return item.short_url === shortUrl;
+  });
 
   if (!found) {
     return res.json({ error: "No short URL found" });
   }
 
-  res.redirect(found.original_url);
+  return res.redirect(found.original_url);
 });
 
 app.listen(port, function() {
