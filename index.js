@@ -8,7 +8,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
-
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use('/public', express.static(`${process.cwd()}/public`));
 
 app.get('/', function(req, res) {
@@ -19,9 +20,6 @@ app.get('/', function(req, res) {
 app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 const urls = [];
 
@@ -59,7 +57,7 @@ app.post("/api/shorturl", function (req, res) {
 });
 
 app.get("/api/shorturl/:short_url", function (req, res) {
-  const shortUrl = parseInt(req.params.short_url);
+  const shortUrl = parseInt(req.params.short_url, 10);
 
   const found = urls.find(function (item) {
     return item.short_url === shortUrl;
@@ -69,7 +67,11 @@ app.get("/api/shorturl/:short_url", function (req, res) {
     return res.json({ error: "No short URL found" });
   }
 
-  return res.redirect(found.original_url);
+  res.writeHead(302, {
+    Location: found.original_url
+  });
+
+  return res.end();
 });
 
 app.listen(port, function() {
