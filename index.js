@@ -4,6 +4,8 @@ const dns = require("dns");
 const cors = require('cors');
 const app = express();
 
+const fs = require("fs");
+
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
@@ -21,7 +23,11 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-const urls = [];
+const DB_FILE = "./urls.json";
+let urls = [];
+if (fs.existsSync(DB_FILE)) {
+  urls = JSON.parse(fs.readFileSync(DB_FILE));
+}
 
 app.post("/api/shorturl", function (req, res) {
   const originalUrl = req.body.url;
@@ -51,6 +57,7 @@ app.post("/api/shorturl", function (req, res) {
     };
 
     urls.push(newUrl);
+    fs.writeFileSync(DB_FILE, JSON.stringify(urls, null, 2));
 
     res.json(newUrl);
   });
