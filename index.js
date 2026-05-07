@@ -5,7 +5,6 @@ const cors = require('cors');
 const app = express();
 
 const fs = require("fs");
-const e = require('express');
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -65,12 +64,8 @@ app.post("/api/shorturl", function (req, res) {
 
 
 app.get("/api/shorturl/:short_url", function (req, res) {
-  console.log("URLS");
-  console.log(urls);
-  const shortUrl = parseInt(req.params.short_url);
-  const found = urls.find(
-    item => item.short_url === shortUrl
-  );
+  const shortUrl = parseInt(req.params.short_url, 10);
+  const found = urls.find(item => item.short_url === shortUrl);
   if (!found) {
     return res.json({ error: "No short URL found" });
   }
