@@ -45,7 +45,7 @@ app.post("/api/shorturl", function (req, res) {
   }
 
   dns.lookup(parsedUrl.hostname, function (err) {
-    if (err && parsedUrl.hostname !== "localhost") {
+    if (err) { // && parsedUrl.hostname !== "localhost"
       return res.json({ error: "invalid url" });
     }
 
