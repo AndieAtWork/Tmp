@@ -33,6 +33,7 @@ app.post("/api/shorturl", function (req, res) {
   const originalUrl = req.body.url;
 
   let parsedUrl;
+  console.log("TRIED: " + originalUrl);
 
   try {
     parsedUrl = new URL(originalUrl);
@@ -45,7 +46,7 @@ app.post("/api/shorturl", function (req, res) {
   }
 
   dns.lookup(parsedUrl.hostname, function (err) {
-    if (err) { // && parsedUrl.hostname !== "localhost"
+    if (err) {
       return res.json({ error: "invalid url" });
     }
 
@@ -58,6 +59,7 @@ app.post("/api/shorturl", function (req, res) {
     urls.push(newUrl);
     fs.writeFileSync(DB_FILE, JSON.stringify(urls, null, 2));
 
+    console.log("SAVED:", newUrl);
     res.json(newUrl);
   });
 });
@@ -65,12 +67,18 @@ app.post("/api/shorturl", function (req, res) {
 
 app.get("/api/shorturl/:short_url", function (req, res) {
   const shortUrl = parseInt(req.params.short_url, 10);
+  console.log("RECEIVED: " + shortUrl);
   const found = urls.find(item => item.short_url === shortUrl);
+
   if (!found) {
+    console.log("NOT FOUND");
     return res.json({ error: "No short URL found" });
   }
 
+  console.log("FOUND: " + found.short_url);
+
   //return res.redirect(302, found.original_url);
+  console.log("REDIRECTED: " + found.original_url);
   res.redirect(found.original_url);
 });
 
