@@ -80,7 +80,12 @@ app.post("/api/users/:_id/exercises", async function (req, res) {
     var username = user.username;
     var description = req.body.description;
     var duration = req.body.duration;
-    var date = new Date(req.body.date);
+    var date;
+    if (req.body.date) {
+      date = new Date(req.body.date)
+    } else {
+      date = new Date()
+    }
     date = date.toDateString()
 
     const exercise = new Exercise({
